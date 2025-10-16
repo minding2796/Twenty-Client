@@ -21,7 +21,7 @@ public class StockManager : MonoBehaviour
     private int minPrice = 10;
     [SerializeField]
     private int maxPrice = 30;
-    private int _stockPrice = 20;
+    [NonSerialized] public int StockPrice = 20;
     private readonly LinkedList<float> _priceHistory = new();
     private int _currentHistoryIndex;
 
@@ -32,20 +32,15 @@ public class StockManager : MonoBehaviour
         UpdateStockPriceDisplay();
     }
 
-    private void Update()
-    {
-        OnNextTurn();
-    }
-
     private void InitializePriceHistory()
     {
         for (var i = 0; i < 49; i++)
         {
             OnNextTurn();
-            _priceHistory.AddFirst(_stockPrice);
+            _priceHistory.AddFirst(StockPrice);
         }
-        _stockPrice = basePrice;
-        _priceHistory.AddFirst(_stockPrice);
+        StockPrice = basePrice;
+        _priceHistory.AddFirst(StockPrice);
         UpdateLineRenderer();
     }
 
@@ -63,19 +58,19 @@ public class StockManager : MonoBehaviour
 
     private void UpdateStockPriceDisplay()
     {
-        stockPriceText.text = _stockPrice.ToString();
+        stockPriceText.text = StockPrice.ToString();
     }
 
-    private void OnNextTurn()
+    public void OnNextTurn()
     {
-        var difference = basePrice - _stockPrice;
+        var difference = basePrice - StockPrice;
         var maxChange = Mathf.Max(2, Mathf.Abs(difference));
         int change;
 
         if (Random.Range(0, 100) < 1)
         {
             change = Random.Range(-10, 11);
-            _stockPrice += change;
+            StockPrice += change;
         }
         else
         {
@@ -92,13 +87,14 @@ public class StockManager : MonoBehaviour
             }
             else change = Random.Range(-1, 2);
 
-            _stockPrice += change;
-            _stockPrice = Mathf.Clamp(_stockPrice, minPrice, maxPrice);
+            StockPrice += change;
+            StockPrice = Mathf.Clamp(StockPrice, minPrice, maxPrice);
         }
 
-        _priceHistory.AddFirst(_stockPrice);
+        _priceHistory.AddFirst(StockPrice);
         while (_priceHistory.Count > 50) _priceHistory.RemoveLast();
         UpdateLineRenderer();
         UpdateStockPriceDisplay();
+        if (GameManager.Cooldown > 0) GameManager.Cooldown -= 1;
     }
 }
