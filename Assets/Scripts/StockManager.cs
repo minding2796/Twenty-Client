@@ -24,6 +24,8 @@ public class StockManager : MonoBehaviour
     [NonSerialized] public int StockPrice = 20;
     private readonly LinkedList<float> _priceHistory = new();
     private int _currentHistoryIndex;
+    
+    public Action OnNextTurnAction = () => { };
 
     private void Start()
     {
@@ -71,6 +73,7 @@ public class StockManager : MonoBehaviour
         {
             change = Random.Range(-10, 11);
             StockPrice += change;
+            StockPrice = Mathf.Max(StockPrice, 1);
         }
         else
         {
@@ -96,5 +99,6 @@ public class StockManager : MonoBehaviour
         UpdateLineRenderer();
         UpdateStockPriceDisplay();
         if (GameManager.Cooldown > 0) GameManager.Cooldown -= 1;
+        OnNextTurnAction.Invoke();
     }
 }

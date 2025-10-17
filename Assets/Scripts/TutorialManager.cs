@@ -60,7 +60,7 @@ public class TutorialManager : MonoBehaviour
         tutorial.GetChild(tutorialIndex).gameObject.SetActive(true);
     }
 
-    private static void OnTutorialEnd()
+    public void OnTutorialEnd()
     {
         SceneManager.LoadScene("MainGame");
     }
