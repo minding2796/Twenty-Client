@@ -13,16 +13,16 @@ namespace NetworkScripts
     public class WebSocketClient : MonoBehaviour
     {
         private static WebSocket _websocket;
-        private const string ServerUrl = "ws://localhost:9485/ws";
+        private const string ServerUrl = "wss://twenty-backend.thinkinggms.com/ws";
 
         public bool IsConnected { get; private set; }
         public bool IsConnecting { get; private set; }
 
-        private async void Start()
+        public async void ConnectOn()
         {
             try
             {
-                if (_websocket == null) await Connect(Networking.AccessToken);
+                if (_websocket == null && Networking.AccessToken != null) await Connect(Networking.AccessToken);
             }
             catch (Exception e)
             {
@@ -30,13 +30,17 @@ namespace NetworkScripts
             }
         }
 
-        private async void OnApplicationQuit()
+        private async void OnApplicationPause(bool pauseStatus)
         {
             try
             {
-                var command = new CommandMessage("game/lose", "Quit");
-                await Message(JsonConvert.SerializeObject(command));
-                await DisconnectAsync();
+                if (pauseStatus)
+                {
+                    var command = new CommandMessage("game/lose", "Quit");
+                    await Message(JsonConvert.SerializeObject(command));
+                    await DisconnectAsync();
+                }
+                else ConnectOn();
             }
             catch (Exception e)
             {
@@ -90,6 +94,7 @@ namespace NetworkScripts
             if (_websocket != null)
             {
                 await _websocket.Close();
+                _websocket = null;
             }
         }
 
@@ -120,7 +125,7 @@ namespace NetworkScripts
                     break;
                 case "game/game_set":
                     Debug.Log($"Game Set: {command.data}");
-                    SceneManager.LoadScene("MainGame");
+                    VersusGameManager.Instance.ShowWlModal(command.data);
                     break;
             }
         }

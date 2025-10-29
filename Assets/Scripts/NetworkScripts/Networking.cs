@@ -18,9 +18,11 @@ namespace NetworkScripts
 
         private void Awake()
         {
-            Application.runInBackground = true;
-            
-            if (Instance) Destroy(gameObject);
+            if (Instance)
+            {
+                Destroy(gameObject);
+                return;
+            }
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }

@@ -4,6 +4,7 @@ using NetworkScripts;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ManagerScripts
 {
@@ -18,9 +19,12 @@ namespace ManagerScripts
         [SerializeField] private TextMeshProUGUI quantityText;
         [SerializeField] private TextMeshProUGUI colText;
         [SerializeField] private TextMeshProUGUI stockPriceText;
+        [SerializeField] private TextMeshProUGUI wlText;
         [SerializeField] private UnityEngine.UI.Slider quantitySlider;
         [SerializeField] private LineRenderer priceLineRenderer;
+        [SerializeField] private GameObject waitForOtherPlayer;
         [SerializeField] private GameObject basModalPanel;
+        [SerializeField] private GameObject wlModalPanel;
     
         private string _basStatus = "매수";
         private PlayerStatus _p1Status;
@@ -36,6 +40,7 @@ namespace ManagerScripts
         {
             Instance = this;
             CloseModal();
+            wlModalPanel.SetActive(false);
             buyButton.onClick.AddListener(() => _basStatus = "매수");
             buyButton.onClick.AddListener(OpenModal);
             sellButton.onClick.AddListener(() => _basStatus = "공매도");
@@ -76,6 +81,8 @@ namespace ManagerScripts
         {
             if (_p1Status == null) return;
             if (_stockStatus == null) return;
+            waitForOtherPlayer.gameObject.SetActive(_p1Status.isReady);
+            
             if (_p1Status.isReady)
             {
                 waitButton.interactable = false;
@@ -143,6 +150,19 @@ namespace ManagerScripts
             }
         }
 
+        public async void Surrender()
+        {
+            try
+            {
+                var command = new CommandMessage("game/lose", "Surrender");
+                await Networking.Instance.webSocketClient.Message(JsonConvert.SerializeObject(command));
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+
         public void ConfirmButton()
         {
             CloseModal();
@@ -195,6 +215,17 @@ namespace ManagerScripts
         public void OnNextTurn()
         {
             OnNextTurnAction?.Invoke();
+        }
+
+        public void ShowWlModal(string text)
+        {
+            wlText.text = text;
+            wlModalPanel.SetActive(true);
+        }
+
+        public void BackToMainScene()
+        {
+            SceneManager.LoadScene("MainGame");
         }
     }
 

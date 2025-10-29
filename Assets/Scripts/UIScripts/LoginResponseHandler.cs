@@ -1,13 +1,17 @@
 using NetworkScripts;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UIScripts
 {
     public class LoginResponseHandler : ResponseHandler
     {
-        public override void HandleResponse(WebViewObject webViewObject, string response)
+        [SerializeField] private WebViewObject webViewObject;
+        public override void HandleResponse(string response)
         {
-            webViewObject.SetVisibility(false);
-            API.Log(response).Build();
+            Networking.AccessToken = response;
+            Networking.Instance.webSocketClient.ConnectOn();
+            SceneManager.LoadScene("Tutorial");
         }
     }
 }

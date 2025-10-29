@@ -19,7 +19,7 @@ namespace UIScripts
         {
             try
             {
-                webViewObject.Init(s => handler.HandleResponse(webViewObject, s));
+                webViewObject.Init(s => handler.HandleResponse(s));
                 
                 webViewObject.LoadURL(url);
                 webViewObject.SetVisibility(true);
@@ -33,6 +33,6 @@ namespace UIScripts
 
     public abstract class ResponseHandler : MonoBehaviour
     {
-        public abstract void HandleResponse(WebViewObject webViewObject, string response);
+        public abstract void HandleResponse(string response);
     }
 }

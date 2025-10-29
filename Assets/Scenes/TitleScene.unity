@@ -284,6 +284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c955a676b247047b7cc65ed9cef221, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoginResponseHandler
+  webViewObject: {fileID: 750578283}
 --- !u!1 &1096972817
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,7 +362,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
